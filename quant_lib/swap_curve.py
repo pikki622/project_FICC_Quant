@@ -64,7 +64,7 @@ def swap_curve(today, quote):
             futures['Maturity'][i].month,
             futures['Maturity'][i].year
         )
-        
+
         futuresHelpers = ql.FuturesRateHelper(
             ql.QuoteHandle(ql.SimpleQuote(price)),
             iborStartDate,
@@ -92,9 +92,7 @@ def swap_curve(today, quote):
     # Combine 1_2_3 with Piece wise linear zero method
     # Curve construction
     helpers = depositHelpers + futuresHelpers + swapHelpers
-    depoFuturesSwapCurve = ql.PiecewiseLinearZero(todays_date, helpers, dayCounter)
-
-    return depoFuturesSwapCurve
+    return ql.PiecewiseLinearZero(todays_date, helpers, dayCounter)
 
 # use curve to compute discount factor and zero rate
 # the curve is calcualted with module used while pricing treasury
@@ -107,14 +105,7 @@ def zero_rate(date, curve):
     day_counter = ql.Actual360()
     compounding = ql.Compounded
     freq = ql.Continuous
-    zero_rate = curve.zeroRate(
-        date,
-        day_counter,
-        compounding,
-        freq
-    ).rate()
-
-    return zero_rate
+    return curve.zeroRate(date, day_counter, compounding, freq).rate()
 
 # cacualte forward rate
 def forward_rate(date, curve):
@@ -122,16 +113,9 @@ def forward_rate(date, curve):
     day_counter = ql.Actual360()
     compounding = ql.Compounded
     freq = ql.Continuous
-    forward_rate = curve.forwardRate(
-        date,
-        date,
-        day_counter,
-        compounding,
-        freq,
-        True
+    return curve.forwardRate(
+        date, date, day_counter, compounding, freq, True
     ).rate()
-    
-    return forward_rate
 
 
 if __name__ == "__main__":
